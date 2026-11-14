@@ -1,0 +1,1287 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sơ đồ trang hướng dẫn DKTV</title>
+<style>
+  :root{
+    --bg:#0f172a; --card:#111c33; --ink:#e5edff; --muted:#93a4c9;
+    --line:#31456f; --accent:#4f8cff;
+    --b1:#4f8cff; --b2:#22c55e; --b3:#f59e0b; --b4:#ec4899; --b5:#a855f7; --b6:#14b8a6;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+       background:var(--bg);color:var(--ink)}
+  .site-shell{max-width:1200px;margin:0 auto;padding:20px 16px 40px}
+  .hero h1{margin:0 0 6px;font-size:26px}
+  .hero .lede{margin:0;color:var(--muted);max-width:760px;font-size:14px;line-height:1.5}
+  .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:18px 0 12px}
+  .toolbar button{background:var(--card);color:var(--ink);border:1px solid var(--line);
+       border-radius:8px;padding:7px 12px;cursor:pointer;font-size:13px}
+  .toolbar button:hover{border-color:var(--accent)}
+  .zoom-control{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;margin-left:auto}
+  .diagram-card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .diagram-viewport{overflow:auto;height:70vh;cursor:grab}
+  .diagram-viewport.dragging{cursor:grabbing}
+  .diagram-canvas{transform-origin:top center;padding:28px 40px;width:max-content;min-width:100%;position:relative}
+  ul.tree,ul.tree ul{list-style:none;margin:0;padding:0;display:flex;gap:26px;justify-content:center}
+  ul.tree{flex-direction:column;align-items:center}
+  ul.tree li{display:flex;flex-direction:column;align-items:center;position:relative}
+  ul.tree li>ul{margin-top:34px}
+  .node{position:relative;z-index:2;display:flex;flex-direction:column;align-items:stretch;min-width:130px;max-width:200px}
+  .node-main{background:#16233f;border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;
+       cursor:pointer;color:var(--ink);text-align:center;font-size:13px;line-height:1.35;font-weight:600;transition:.15s}
+  .node-main:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .node-en{display:block;font-size:9.5px;font-weight:400;font-style:italic;color:var(--muted);margin-top:2px;line-height:1.25}
+  .panel-en{font-size:13px;font-weight:400;font-style:italic;color:var(--muted);margin-top:2px}
+  .node .node-num{font-size:10px;color:var(--muted);margin-bottom:3px;text-align:center}
+  .node.is-expanded .node-main{box-shadow:0 0 0 2px rgba(79,140,255,.25)}
+  .node-expand-bar{margin-top:5px;height:14px;border:none;border-radius:6px;background:#1d2c4d;color:var(--muted);
+       cursor:pointer;font-size:10px;line-height:1;display:flex;align-items:center;justify-content:center}
+  .node-expand-bar:hover{background:var(--accent);color:#fff}
+  .node.branch-1 .node-main{border-color:var(--b1)} .node.branch-2 .node-main{border-color:var(--b2)}
+  .node.branch-3 .node-main{border-color:var(--b3)} .node.branch-4 .node-main{border-color:var(--b4)}
+  .node.branch-5 .node-main{border-color:var(--b5)} .node.branch-6 .node-main{border-color:var(--b6)}
+  svg.links{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+  svg.links path{fill:none;stroke:var(--line);stroke-width:1.6}
+  .scrim{position:fixed;inset:0;background:rgba(5,10,24,.55);z-index:40}
+  .detail-panel{position:fixed;top:0;right:0;height:100vh;width:min(440px,92vw);background:var(--card);
+       border-left:1px solid var(--line);transform:translateX(100%);transition:.25s;z-index:50;
+       display:flex;flex-direction:column;padding:20px}
+  .detail-panel.open{transform:translateX(0)}
+  .panel-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .panel-id{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .panel-header h2{margin:4px 0 0;font-size:19px}
+  .icon-button{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1}
+  .panel-group{color:var(--accent);font-size:12px;margin:10px 0 4px;font-weight:600}
+  .markdown-content{font-size:14px;line-height:1.6;color:#cdd8f2;overflow:auto}
+  .markdown-content h3{font-size:15px;margin:14px 0 6px}
+  .markdown-content ul{padding-left:18px;margin:6px 0}
+  .markdown-content code{background:#0c1830;padding:1px 5px;border-radius:4px;font-size:12px}
+  .markdown-content a{color:var(--accent)}
+  .child-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .child-pills button{background:#16233f;border:1px solid var(--line);color:var(--ink);border-radius:20px;
+       padding:5px 10px;font-size:12px;cursor:pointer}
+  .child-pills button:hover{border-color:var(--accent)}
+  h3.section{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:18px 0 6px}
+</style>
+</head>
+<body>
+<div class="site-shell">
+  <header class="hero">
+    <h1>Sơ đồ trang hướng dẫn DKTV</h1>
+    <p class="lede">Bấm thanh dưới mỗi node để mở hoặc thu nhánh; bấm tên node để xem mã thẻ, mục đích, đường dẫn và clip.</p>
+  </header>
+  <nav class="toolbar">
+    <button id="expandAll" type="button">Mở toàn bộ</button>
+    <button id="collapseAll" type="button">Thu gọn</button>
+    <label class="zoom-control">Zoom
+      <input id="zoomRange" type="range" min="0.5" max="1.4" value="0.9" step="0.05" />
+      <span id="zoomValue">0.90×</span>
+    </label>
+  </nav>
+  <main>
+    <section class="diagram-card">
+      <div id="diagramViewport" class="diagram-viewport">
+        <div id="diagramCanvas" class="diagram-canvas"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="scrim" class="scrim" hidden></div>
+<aside id="detailPanel" class="detail-panel" aria-hidden="true">
+  <div class="panel-header">
+    <div><div id="panelId" class="panel-id">Node</div><h2 id="panelTitle"></h2></div>
+    <button id="closePanel" class="icon-button" type="button" aria-label="Dong">&times;</button>
+  </div>
+  <div id="panelGroup" class="panel-group"></div>
+  <div id="panelDescription" class="markdown-content"></div>
+  <h3 class="section" id="childrenLabel" hidden>Cac nhanh con</h3>
+  <div id="panelChildren" class="child-pills"></div>
+</aside>
+
+<script>
+/* ============================================================
+   DU LIEU - chi can thay object diagramData nay cho topic moi.
+   Moi node: { id, title, en(phu de tieng Anh, tuy chon), group, kind, detail(Markdown), children:[] }
+   ============================================================ */
+const diagramData =
+/*__DIAGRAM_DATA__*/
+{
+  "id": 125,
+  "title": "Trang hướng dẫn DKTV",
+  "en": "DKTV User Guide Site",
+  "detail": "Sơ đồ trang của trang hướng dẫn sử dụng Hệ thống đăng ký và công nhận Thành viên.\n\n- **57 thẻ việc** cho 6 vai, 8 trang chung, 3 chương riêng\n- Hai ngôn ngữ: `/` (tiếng Việt) và `/en/` (English)\n- Mỗi thẻ việc có đường dẫn sâu riêng\n- Tên miền dự kiến: guideline.vifc.gov.vn",
+  "children": [
+    {
+      "id": 95,
+      "title": "Trang vào",
+      "en": "Landing",
+      "detail": "Trang đầu tiên người dùng thấy.\n\n- Chọn phía: Người nộp hồ sơ hoặc Cán bộ\n- Chọn vai\n- Ô tìm kiếm gõ không dấu\n- Nút chuyển ngôn ngữ\n- Clip giới thiệu toàn cảnh\n\n**Đường dẫn:** `#top`",
+      "children": [
+        {
+          "id": 92,
+          "title": "Chọn phía và vai",
+          "en": "Choose side and role",
+          "detail": "Hai nút lớn cho hai phía; phía Cán bộ mở ra 5 vai. Một lần bấm tới trang vai.",
+          "kind": "leaf"
+        },
+        {
+          "id": 93,
+          "title": "Tìm kiếm",
+          "en": "Search",
+          "detail": "Gõ không dấu, tìm theo tên việc, tên nút, câu báo lỗi. Kết quả dẫn thẳng tới thẻ việc.",
+          "kind": "leaf"
+        },
+        {
+          "id": 94,
+          "title": "Clip giới thiệu toàn cảnh",
+          "en": "Overview clip",
+          "detail": "Clip CH0, 3-5 phút, mở ngay trên trang vào.",
+          "kind": "leaf"
+        }
+      ]
+    },
+    {
+      "id": 96,
+      "title": "Phía người nộp hồ sơ",
+      "en": "Applicant side",
+      "detail": "Dành cho doanh nghiệp, tổ chức nộp hồ sơ trên member.vifc.gov.vn.",
+      "children": [
+        {
+          "id": 24,
+          "title": "Người nộp hồ sơ",
+          "en": "Applicant",
+          "detail": "**Phân hệ:** member.vifc.gov.vn\n\n**Số thẻ việc:** 16\n\n**Đường dẫn:** `#dn`\n\n**Lô sản xuất:** 1\n\n**Lộ trình đọc:** HD.CH.02 › HD.DN.01 › HD.DN.02 › HD.DN.03 › HD.DN.06 › HD.DN.07 › HD.DN.08 › HD.DN.10 › HD.DN.11 › HD.DN.12 › HD.DN.13 › HD.DN.15",
+          "group": "Người nộp",
+          "children": [
+            {
+              "id": 4,
+              "title": "Bắt đầu",
+              "en": "",
+              "detail": "**3 thẻ việc** trong nhóm này.",
+              "group": "Người nộp hồ sơ",
+              "children": [
+                {
+                  "id": 1,
+                  "title": "Nhận tài khoản, đăng nhập lần đầu, đổi mật khẩu",
+                  "en": "Receive your account, sign in for the first time, change your password",
+                  "detail": "**Mã:** HD.DN.01\n\n**Loại nội dung:** Làm quen\n\n**Mục đích:** Vào được Cổng đăng ký bằng tài khoản Cơ quan điều hành cấp và đặt mật khẩu của riêng mình.\n\n**Đường dẫn:** `#hd-dn-01`\n\n**Clip:** DN1.1\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD DN 3.1; màn đăng nhập 13/11",
+                  "group": "Làm quen",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 2,
+                  "title": "Trang chủ, thông báo, đổi ngôn ngữ",
+                  "en": "Homepage, notifications, switching language",
+                  "detail": "**Mã:** HD.DN.02\n\n**Loại nội dung:** Làm quen\n\n**Mục đích:** Biết các mục trên thanh menu, nơi xem thông báo và cách đổi giao diện giữa tiếng Việt và English.\n\n**Đường dẫn:** `#hd-dn-02`\n\n**Clip:** DN1.2\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD DN 3.2; Hồ sơ hệ thống v5 mục 1",
+                  "group": "Làm quen",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 3,
+                  "title": "Một vòng làm việc của người nộp",
+                  "en": "One working cycle for an applicant",
+                  "detail": "**Mã:** HD.DN.03\n\n**Loại nội dung:** Làm quen\n\n**Mục đích:** Hình dung trọn một lượt từ tạo hồ sơ tới nhận kết quả trước khi bắt tay vào làm.\n\n**Đường dẫn:** `#hd-dn-03`\n\n**Clip:** DN1.3\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD DN 1; slide lễ công bố phần 2",
+                  "group": "Làm quen",
+                  "kind": "leaf"
+                }
+              ]
+            },
+            {
+              "id": 7,
+              "title": "Chuẩn bị",
+              "en": "",
+              "detail": "**2 thẻ việc** trong nhóm này.",
+              "group": "Người nộp hồ sơ",
+              "children": [
+                {
+                  "id": 5,
+                  "title": "Kiểm tra tên doanh nghiệp",
+                  "en": "Check company name",
+                  "detail": "**Mã:** HD.DN.04\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Biết tên doanh nghiệp dự kiến có trùng hay không trước khi kê khai.\n\n**Đường dẫn:** `#hd-dn-04`\n\n**Clip:** DN2.1\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** Menu Kiểm tra tên doanh nghiệp",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 6,
+                  "title": "Xác thực eKYC",
+                  "en": "Complete eKYC",
+                  "detail": "**Mã:** HD.DN.05\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Xác thực danh tính người nộp hồ sơ trên Cổng.\n\n**Đường dẫn:** `#hd-dn-05`\n\n**Clip:** DN2.2\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** Menu eKYC",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                }
+              ]
+            },
+            {
+              "id": 12,
+              "title": "Làm hồ sơ",
+              "en": "",
+              "detail": "**4 thẻ việc** trong nhóm này.",
+              "group": "Người nộp hồ sơ",
+              "children": [
+                {
+                  "id": 8,
+                  "title": "Chọn đúng thủ tục và Cơ quan tiếp nhận",
+                  "en": "Choose the right procedure and receiving authority",
+                  "detail": "**Mã:** HD.DN.06\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Mở đúng biểu mẫu của thủ tục cần nộp và chọn đúng nơi nhận (TP.HCM hoặc Đà Nẵng).\n\n**Đường dẫn:** `#hd-dn-06`\n\n**Clip:** DN3.1\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD DN 4.1; màn Tạo hồ sơ ba nhóm",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 9,
+                  "title": "Kê khai biểu mẫu",
+                  "en": "Fill in the form",
+                  "detail": "**Mã:** HD.DN.07\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Điền đủ và đúng các nhóm thông tin của biểu mẫu.\n\n**Đường dẫn:** `#hd-dn-07`\n\n**Clip:** DN3.2\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD DN 4.2",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 10,
+                  "title": "Tải biểu mẫu, đính kèm tài liệu",
+                  "en": "Download templates and attach documents",
+                  "detail": "**Mã:** HD.DN.08\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Đưa đủ bản scan và bản mềm, tiếng Việt và tiếng Anh, vào đúng nhóm tài liệu.\n\n**Đường dẫn:** `#hd-dn-08`\n\n**Clip:** DN3.3\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD DN 4.2; slide bước 5; Hồ sơ hệ thống v5 mục 4.7",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 11,
+                  "title": "Lưu nháp và mở lại hồ sơ",
+                  "en": "Save a draft and reopen it",
+                  "detail": "**Mã:** HD.DN.09\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Giữ phần đã kê khai để làm tiếp vào lúc khác.\n\n**Đường dẫn:** `#hd-dn-09`\n\n**Clip:** DN3.4\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD DN 4.4",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                }
+              ]
+            },
+            {
+              "id": 15,
+              "title": "Soát và gửi",
+              "en": "",
+              "detail": "**2 thẻ việc** trong nhóm này.",
+              "group": "Người nộp hồ sơ",
+              "children": [
+                {
+                  "id": 13,
+                  "title": "Kiểm tra trước khi gửi",
+                  "en": "Pre-submission checklist",
+                  "detail": "**Mã:** HD.DN.10\n\n**Loại nội dung:** Tra cứu\n\n**Mục đích:** Soát 7 điểm để hồ sơ không bị trả lại vì thiếu sót.\n\n**Đường dẫn:** `#hd-dn-10`\n\n**Clip:** DN3.5\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD DN 6; slide checklist 7 điểm",
+                  "group": "Tra cứu",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 14,
+                  "title": "Gửi hồ sơ",
+                  "en": "Submit the dossier",
+                  "detail": "**Mã:** HD.DN.11\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Chuyển hồ sơ đã kê khai xong tới Cơ quan điều hành.\n\n**Đường dẫn:** `#hd-dn-11`\n\n**Clip:** DN3.6\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD DN 4.4; thông báo \"Mục đính kèm không chính xác\"",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                }
+              ]
+            },
+            {
+              "id": 19,
+              "title": "Theo dõi và bổ sung",
+              "en": "",
+              "detail": "**3 thẻ việc** trong nhóm này.",
+              "group": "Người nộp hồ sơ",
+              "children": [
+                {
+                  "id": 16,
+                  "title": "Theo dõi trạng thái hồ sơ",
+                  "en": "Track dossier status",
+                  "detail": "**Mã:** HD.DN.12\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Biết hồ sơ đang ở chặng nào và có việc gì chờ mình.\n\n**Đường dẫn:** `#hd-dn-12`\n\n**Clip:** DN4.1\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD DN 4.5, 5",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 17,
+                  "title": "Bổ sung khi bị yêu cầu",
+                  "en": "Respond to a request for supplements",
+                  "detail": "**Mã:** HD.DN.13\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Sửa hoặc thêm thông tin, tài liệu đúng theo yêu cầu rồi gửi lại.\n\n**Đường dẫn:** `#hd-dn-13`\n\n**Clip:** DN4.2\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD DN 4.5",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 18,
+                  "title": "Khi hồ sơ bị từ chối",
+                  "en": "When a dossier is rejected",
+                  "detail": "**Mã:** HD.DN.14\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Đọc lý do từ chối và biết bước tiếp theo.\n\n**Đường dẫn:** `#hd-dn-14`\n\n**Clip:** DN4.3\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD DN 5, 7",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                }
+              ]
+            },
+            {
+              "id": 21,
+              "title": "Kết quả",
+              "en": "",
+              "detail": "**1 thẻ việc** trong nhóm này.",
+              "group": "Người nộp hồ sơ",
+              "children": [
+                {
+                  "id": 20,
+                  "title": "Nhận và tải kết quả",
+                  "en": "Receive and download the result",
+                  "detail": "**Mã:** HD.DN.15\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Lấy bộ kết quả và kiểm tra thông tin trên đó.\n\n**Đường dẫn:** `#hd-dn-15`\n\n**Clip:** DN4.4\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD DN 4.6",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                }
+              ]
+            },
+            {
+              "id": 23,
+              "title": "Tài khoản và trợ giúp",
+              "en": "",
+              "detail": "**1 thẻ việc** trong nhóm này.",
+              "group": "Người nộp hồ sơ",
+              "children": [
+                {
+                  "id": 22,
+                  "title": "Quên mật khẩu, không đăng nhập được",
+                  "en": "Forgotten password, cannot sign in",
+                  "detail": "**Mã:** HD.DN.16\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Vào lại được Cổng khi mất mật khẩu hoặc tài khoản bị khóa.\n\n**Đường dẫn:** `#hd-dn-16`\n\n**Clip:** DN1.4\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD DN 7",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 97,
+      "title": "Phía cán bộ",
+      "en": "Staff side",
+      "detail": "Dành cho cán bộ Cơ quan điều hành, chia theo 5 vai xử lý.",
+      "children": [
+        {
+          "id": 33,
+          "title": "Bộ phận một cửa",
+          "en": "One-stop desk",
+          "detail": "**Phân hệ:** bo, workflow (Yêu cầu)\n\n**Số thẻ việc:** 6\n\n**Đường dẫn:** `#mc`\n\n**Lô sản xuất:** 2\n\n**Lộ trình đọc:** HD.CH.01 › HD.CH.02 › HD.MC.01 › HD.MC.02 › HD.MC.03 › HD.MC.04 › HD.MC.06 › HD.CH.04",
+          "group": "Cán bộ",
+          "children": [
+            {
+              "id": 26,
+              "title": "Bắt đầu",
+              "en": "",
+              "detail": "**1 thẻ việc** trong nhóm này.",
+              "group": "Bộ phận một cửa",
+              "children": [
+                {
+                  "id": 25,
+                  "title": "Đăng nhập, xác thực 2 lớp, trang chủ nội bộ",
+                  "en": "Sign in, two-factor authentication, internal homepage",
+                  "detail": "**Mã:** HD.MC.01\n\n**Loại nội dung:** Làm quen\n\n**Mục đích:** Vào hệ thống nội bộ và biết khối Việc chờ xử lý, thông báo, thanh chuyển phân hệ.\n\n**Đường dẫn:** `#hd-mc-01`\n\n**Clip:** MC1.1\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** BecaWork ver1.3: đăng nhập, xác thực 2 lớp; bo 13/11",
+                  "group": "Làm quen",
+                  "kind": "leaf"
+                }
+              ]
+            },
+            {
+              "id": 32,
+              "title": "Tiếp nhận",
+              "en": "",
+              "detail": "**5 thẻ việc** trong nhóm này.",
+              "group": "Bộ phận một cửa",
+              "children": [
+                {
+                  "id": 27,
+                  "title": "Nhận việc chờ xử lý, mở phiếu",
+                  "en": "Pick up pending work and open a request",
+                  "detail": "**Mã:** HD.MC.02\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Tìm đúng phiếu đang chờ mình và mở ra xem.\n\n**Đường dẫn:** `#hd-mc-02`\n\n**Clip:** MC1.2\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD NB 4.1; workflow 13/11",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 28,
+                  "title": "Kiểm hồ sơ sơ bộ",
+                  "en": "Preliminary dossier check",
+                  "detail": "**Mã:** HD.MC.03\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Soát thành phần hồ sơ theo checklist của thủ tục.\n\n**Đường dẫn:** `#hd-mc-03`\n\n**Clip:** MC1.3\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD NB 4.1",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 29,
+                  "title": "Yêu cầu bổ sung",
+                  "en": "Request supplements",
+                  "detail": "**Mã:** HD.MC.04\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Trả hồ sơ cho người nộp kèm nội dung cần sửa, cần thêm.\n\n**Đường dẫn:** `#hd-mc-04`\n\n**Clip:** MC1.4\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD NB 4.1, 4.2",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 30,
+                  "title": "Từ chối kèm lý do",
+                  "en": "Reject with a reason",
+                  "detail": "**Mã:** HD.MC.05\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Dừng hồ sơ không đủ điều kiện và ghi rõ lý do.\n\n**Đường dẫn:** `#hd-mc-05`\n\n**Clip:** MC1.5\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD NB 4.1",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 31,
+                  "title": "Đồng ý tiếp nhận, chuyển bước",
+                  "en": "Accept and forward",
+                  "detail": "**Mã:** HD.MC.06\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Chuyển hồ sơ hợp lệ sang Cơ quan tiếp nhận xử lý.\n\n**Đường dẫn:** `#hd-mc-06`\n\n**Clip:** MC1.6\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD NB 4.1",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 50,
+          "title": "Chuyên viên",
+          "en": "Case officer",
+          "detail": "**Phân hệ:** workflow (Yêu cầu), work (Hồ sơ)\n\n**Số thẻ việc:** 11\n\n**Đường dẫn:** `#cv`\n\n**Lô sản xuất:** 2\n\n**Lộ trình đọc:** HD.CH.01 › HD.CH.02 › HD.MC.01 › HD.CV.01 › HD.CV.02 › HD.CV.03 › HD.CV.05 › HD.CV.06 › HD.CV.07 › HD.CV.11",
+          "group": "Cán bộ",
+          "children": [
+            {
+              "id": 35,
+              "title": "Kiểm tra",
+              "en": "",
+              "detail": "**1 thẻ việc** trong nhóm này.",
+              "group": "Chuyên viên",
+              "children": [
+                {
+                  "id": 34,
+                  "title": "Kiểm tra hồ sơ, xác nhận hồ sơ đầy đủ",
+                  "en": "Review the dossier and confirm completeness",
+                  "detail": "**Mã:** HD.CV.01\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Kiểm tra nội dung hồ sơ và xác nhận đủ để chuyển sang xử lý.\n\n**Đường dẫn:** `#hd-cv-01`\n\n**Clip:** CV1.1\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD NB 4.2",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                }
+              ]
+            },
+            {
+              "id": 42,
+              "title": "Xử lý hồ sơ",
+              "en": "",
+              "detail": "**6 thẻ việc** trong nhóm này.",
+              "group": "Chuyên viên",
+              "children": [
+                {
+                  "id": 36,
+                  "title": "Mở hồ sơ nội bộ trên Quản lý hồ sơ",
+                  "en": "Open the internal file in Dossier Management",
+                  "detail": "**Mã:** HD.CV.02\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Tìm hồ sơ nội bộ hệ thống tự sinh sau khi tiếp nhận.\n\n**Đường dẫn:** `#hd-cv-02`\n\n**Clip:** CV1.2\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD NB 5.1; work 13/11",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 37,
+                  "title": "Làm công việc con",
+                  "en": "Work on sub-tasks",
+                  "detail": "**Mã:** HD.CV.03\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Thực hiện và cập nhật trạng thái từng công việc con của bước đang xử lý.\n\n**Đường dẫn:** `#hd-cv-03`\n\n**Clip:** CV2.1\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD NB 5.2; work 13/11",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 38,
+                  "title": "Lấy ý kiến cơ quan liên quan, hội đồng",
+                  "en": "Consult related agencies and the advisory council",
+                  "detail": "**Mã:** HD.CV.04\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Gửi lấy ý kiến và ghi nhận kết quả vào hồ sơ.\n\n**Đường dẫn:** `#hd-cv-04`\n\n**Clip:** CV2.2\n\n**Nhóm thủ tục:** Ngân hàng, Thành viên\n\n**Nguồn nội dung:** bo 13/11: công việc con QT.NH.03",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 39,
+                  "title": "Chuyển trạng thái hồ sơ",
+                  "en": "Change dossier status",
+                  "detail": "**Mã:** HD.CV.07\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Đưa hồ sơ sang bước kế tiếp khi đã đủ điều kiện.\n\n**Đường dẫn:** `#hd-cv-07`\n\n**Clip:** CV1.3\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD NB 5, 6.1",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 40,
+                  "title": "Quy trình liên quan",
+                  "en": "Related workflows",
+                  "detail": "**Mã:** HD.CV.08\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Mở và theo dõi các phiếu phát sinh gắn với hồ sơ.\n\n**Đường dẫn:** `#hd-cv-08`\n\n**Clip:** CV2.3\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD NB 5.3, 5.4",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 41,
+                  "title": "Bình luận, nhắc người, đính kèm",
+                  "en": "Comment, mention, attach",
+                  "detail": "**Mã:** HD.CV.09\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Trao đổi và lưu tài liệu ngay trên hồ sơ để có dấu vết.\n\n**Đường dẫn:** `#hd-cv-09`\n\n**Clip:** CV2.4\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD NB 1.1, 7",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                }
+              ]
+            },
+            {
+              "id": 45,
+              "title": "Văn bản",
+              "en": "",
+              "detail": "**2 thẻ việc** trong nhóm này.",
+              "group": "Chuyên viên",
+              "children": [
+                {
+                  "id": 43,
+                  "title": "Tạo phiếu lập văn bản",
+                  "en": "Create a document-drafting request",
+                  "detail": "**Mã:** HD.CV.05\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Lập văn bản đầu ra từ mẫu có sẵn, bản tiếng Việt và tiếng Anh.\n\n**Đường dẫn:** `#hd-cv-05`\n\n**Clip:** CV3.1\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** Hồ sơ hệ thống v5 mục 5 (BH-20261112-10)",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 44,
+                  "title": "Trình ký văn bản",
+                  "en": "Submit a document for signature",
+                  "detail": "**Mã:** HD.CV.06\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Chuyển văn bản đã lập tới người duyệt và người ký.\n\n**Đường dẫn:** `#hd-cv-06`\n\n**Clip:** CV3.2\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** BecaWork ver1.3: người trình ký",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                }
+              ]
+            },
+            {
+              "id": 47,
+              "title": "Tra cứu",
+              "en": "",
+              "detail": "**1 thẻ việc** trong nhóm này.",
+              "group": "Chuyên viên",
+              "children": [
+                {
+                  "id": 46,
+                  "title": "Tra cứu hồ sơ, lịch sử cập nhật",
+                  "en": "Search dossiers and view history",
+                  "detail": "**Mã:** HD.CV.10\n\n**Loại nội dung:** Tra cứu\n\n**Mục đích:** Tìm một hồ sơ và xem ai đã làm gì, khi nào.\n\n**Đường dẫn:** `#hd-cv-10`\n\n**Clip:** CV1.4\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD NB 7; work 13/11",
+                  "group": "Tra cứu",
+                  "kind": "leaf"
+                }
+              ]
+            },
+            {
+              "id": 49,
+              "title": "Kết quả",
+              "en": "",
+              "detail": "**1 thẻ việc** trong nhóm này.",
+              "group": "Chuyên viên",
+              "children": [
+                {
+                  "id": 48,
+                  "title": "Hoàn thành và trả kết quả",
+                  "en": "Complete and return the result",
+                  "detail": "**Mã:** HD.CV.11\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Đóng hồ sơ và trả bộ kết quả cho người nộp.\n\n**Đường dẫn:** `#hd-cv-11`\n\n**Clip:** CV3.3\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD NB 5.5",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 59,
+          "title": "Trưởng phòng, lãnh đạo Ban",
+          "en": "Head of division",
+          "detail": "**Phân hệ:** workflow (Yêu cầu), work (Hồ sơ)\n\n**Số thẻ việc:** 5\n\n**Đường dẫn:** `#tp`\n\n**Lô sản xuất:** 3\n\n**Lộ trình đọc:** HD.CH.02 › HD.MC.01 › HD.TP.01 › HD.TP.02 › HD.TP.04 › HD.TP.05",
+          "group": "Cán bộ",
+          "children": [
+            {
+              "id": 54,
+              "title": "Soát và duyệt",
+              "en": "",
+              "detail": "**3 thẻ việc** trong nhóm này.",
+              "group": "Trưởng phòng, lãnh đạo Ban",
+              "children": [
+                {
+                  "id": 51,
+                  "title": "Tìm phiếu cần soát",
+                  "en": "Find requests awaiting review",
+                  "detail": "**Mã:** HD.TP.01\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Thấy ngay các phiếu đang chờ mình trên trang chủ và trong thông báo.\n\n**Đường dẫn:** `#hd-tp-01`\n\n**Clip:** TP1.1\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** BecaWork ver1.3: người phê duyệt II.1, III",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 52,
+                  "title": "Đồng ý hoặc yêu cầu trình lại",
+                  "en": "Agree or send back for resubmission",
+                  "detail": "**Mã:** HD.TP.02\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Cho hồ sơ đi tiếp, hoặc trả về người lập kèm ý kiến.\n\n**Đường dẫn:** `#hd-tp-02`\n\n**Clip:** TP1.2\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** BecaWork ver1.3: người phê duyệt II.2, II.6",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 53,
+                  "title": "Yêu cầu bổ sung thông tin, tham vấn",
+                  "en": "Request more information, consult others",
+                  "detail": "**Mã:** HD.TP.03\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Hỏi thêm một người trong luồng hoặc xin ý kiến người khác trước khi quyết định.\n\n**Đường dẫn:** `#hd-tp-03`\n\n**Clip:** TP1.3\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** BecaWork ver1.3: người phê duyệt II.3, II.5",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                }
+              ]
+            },
+            {
+              "id": 56,
+              "title": "Giao việc",
+              "en": "",
+              "detail": "**1 thẻ việc** trong nhóm này.",
+              "group": "Trưởng phòng, lãnh đạo Ban",
+              "children": [
+                {
+                  "id": 55,
+                  "title": "Chuyển xử lý, ủy quyền phê duyệt",
+                  "en": "Reassign and delegate approval",
+                  "detail": "**Mã:** HD.TP.04\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Giao phiếu cho người khác xử lý thay khi vắng mặt hoặc khi cần.\n\n**Đường dẫn:** `#hd-tp-04`\n\n**Clip:** TP1.4\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** BecaWork ver1.3: người phê duyệt II.4, III.3.5",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                }
+              ]
+            },
+            {
+              "id": 58,
+              "title": "Theo dõi",
+              "en": "",
+              "detail": "**1 thẻ việc** trong nhóm này.",
+              "group": "Trưởng phòng, lãnh đạo Ban",
+              "children": [
+                {
+                  "id": 57,
+                  "title": "Theo dõi tiến độ của Ban",
+                  "en": "Track your division's progress",
+                  "detail": "**Mã:** HD.TP.05\n\n**Loại nội dung:** Tra cứu\n\n**Mục đích:** Xem phiếu trễ hạn, đến hạn và đang theo dõi.\n\n**Đường dẫn:** `#hd-tp-05`\n\n**Clip:** TP1.5\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** workflow 13/11: Trễ hạn, Hạn hôm nay, Cần xử lý, Theo dõi",
+                  "group": "Tra cứu",
+                  "kind": "leaf"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 67,
+          "title": "Lãnh đạo Cơ quan điều hành",
+          "en": "Executive leadership",
+          "detail": "**Phân hệ:** workflow (Yêu cầu)\n\n**Số thẻ việc:** 4\n\n**Đường dẫn:** `#ld`\n\n**Lô sản xuất:** 3\n\n**Lộ trình đọc:** HD.CH.02 › HD.MC.01 › HD.LD.01 › HD.LD.03 › HD.LD.04",
+          "group": "Cán bộ",
+          "children": [
+            {
+              "id": 62,
+              "title": "Phê duyệt",
+              "en": "",
+              "detail": "**2 thẻ việc** trong nhóm này.",
+              "group": "Lãnh đạo Cơ quan điều hành",
+              "children": [
+                {
+                  "id": 60,
+                  "title": "Phê duyệt phiếu",
+                  "en": "Approve a request",
+                  "detail": "**Mã:** HD.LD.01\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Ra quyết định cuối cùng trên phiếu trình.\n\n**Đường dẫn:** `#hd-ld-01`\n\n**Clip:** LD1.1\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** BecaWork ver1.3: người phê duyệt II.2",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 61,
+                  "title": "Không đồng ý hoặc yêu cầu trình lại",
+                  "en": "Decline or send back",
+                  "detail": "**Mã:** HD.LD.02\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Dừng phiếu hoặc trả về kèm ý kiến chỉ đạo.\n\n**Đường dẫn:** `#hd-ld-02`\n\n**Clip:** LD1.2\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** BecaWork ver1.3: người phê duyệt II.6, II.8",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                }
+              ]
+            },
+            {
+              "id": 64,
+              "title": "Ký số",
+              "en": "",
+              "detail": "**1 thẻ việc** trong nhóm này.",
+              "group": "Lãnh đạo Cơ quan điều hành",
+              "children": [
+                {
+                  "id": 63,
+                  "title": "Ký số văn bản",
+                  "en": "Digitally sign a document",
+                  "detail": "**Mã:** HD.LD.03\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Ký văn bản đầu ra bằng chữ ký số.\n\n**Đường dẫn:** `#hd-ld-03`\n\n**Clip:** LD1.3\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** Prompt khởi động mục 5",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                }
+              ]
+            },
+            {
+              "id": 66,
+              "title": "Theo dõi",
+              "en": "",
+              "detail": "**1 thẻ việc** trong nhóm này.",
+              "group": "Lãnh đạo Cơ quan điều hành",
+              "children": [
+                {
+                  "id": 65,
+                  "title": "Xem tiến độ hồ sơ",
+                  "en": "View dossier progress",
+                  "detail": "**Mã:** HD.LD.04\n\n**Loại nội dung:** Tra cứu\n\n**Mục đích:** Nắm tình hình các hồ sơ đang xử lý.\n\n**Đường dẫn:** `#hd-ld-04`\n\n**Clip:** LD1.4\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** bo 13/11: trang chủ",
+                  "group": "Tra cứu",
+                  "kind": "leaf"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 74,
+          "title": "Quản trị, quản lý thành viên",
+          "en": "Administrator",
+          "detail": "**Phân hệ:** crm, workflow (Quản trị)\n\n**Số thẻ việc:** 4\n\n**Đường dẫn:** `#qt`\n\n**Lô sản xuất:** 3\n\n**Lộ trình đọc:** HD.CH.01 › HD.MC.01 › HD.QT.01 › HD.QT.02 › HD.QT.03 › HD.QT.04",
+          "group": "Cán bộ",
+          "children": [
+            {
+              "id": 71,
+              "title": "Tài khoản",
+              "en": "",
+              "detail": "**3 thẻ việc** trong nhóm này.",
+              "group": "Quản trị, quản lý thành viên",
+              "children": [
+                {
+                  "id": 68,
+                  "title": "Khởi tạo doanh nghiệp",
+                  "en": "Create an enterprise record",
+                  "detail": "**Mã:** HD.QT.01\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Tạo hồ sơ doanh nghiệp trên crm để cấp tài khoản.\n\n**Đường dẫn:** `#hd-qt-01`\n\n**Clip:** QT1.1\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD NB 3; crm 13/11",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 69,
+                  "title": "Cấp tài khoản Cổng đăng ký",
+                  "en": "Issue a portal account",
+                  "detail": "**Mã:** HD.QT.02\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Cấp tài khoản để doanh nghiệp đăng nhập Cổng.\n\n**Đường dẫn:** `#hd-qt-02`\n\n**Clip:** QT1.2\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD NB 3",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                },
+                {
+                  "id": 70,
+                  "title": "Cấp lại mật khẩu, khóa tài khoản",
+                  "en": "Reset a password, lock an account",
+                  "detail": "**Mã:** HD.QT.03\n\n**Loại nội dung:** Cách làm\n\n**Mục đích:** Xử lý khi doanh nghiệp mất mật khẩu hoặc tài khoản cần dừng.\n\n**Đường dẫn:** `#hd-qt-03`\n\n**Clip:** QT1.3\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD DN 7",
+                  "group": "Cách làm",
+                  "kind": "leaf"
+                }
+              ]
+            },
+            {
+              "id": 73,
+              "title": "Cài đặt",
+              "en": "",
+              "detail": "**1 thẻ việc** trong nhóm này.",
+              "group": "Quản trị, quản lý thành viên",
+              "children": [
+                {
+                  "id": 72,
+                  "title": "Cài đặt quy trình",
+                  "en": "Workflow configuration",
+                  "detail": "**Mã:** HD.QT.04\n\n**Loại nội dung:** Tra cứu\n\n**Mục đích:** Biết nơi xem hướng dẫn cài đặt quy trình (dẫn sang hướng dẫn cài đặt v7).\n\n**Đường dẫn:** `#hd-qt-04`\n\n**Clip:** không có\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** 20261107_HuongDan_QuyTrinhSoHoa_DKTV_v7.html",
+                  "group": "Tra cứu",
+                  "kind": "leaf"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 86,
+      "title": "Trang chung",
+      "en": "Common pages",
+      "detail": "**Phân hệ:** -\n\n**Số thẻ việc:** 8\n\n**Đường dẫn:** `#ch`\n\n**Lô sản xuất:** 4",
+      "group": "Chung",
+      "children": [
+        {
+          "id": 78,
+          "title": "Tổng quan",
+          "en": "",
+          "detail": "**3 thẻ việc** trong nhóm này.",
+          "group": "Trang chung",
+          "children": [
+            {
+              "id": 75,
+              "title": "Tổng quan hệ thống, năm phân hệ",
+              "en": "System overview and its five modules",
+              "detail": "**Mã:** HD.CH.01\n\n**Loại nội dung:** Làm quen\n\n**Mục đích:** Biết member, bo, workflow, work, crm dùng để làm gì.\n\n**Đường dẫn:** `#hd-ch-01`\n\n**Clip:** CH0.1\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** Hồ sơ hệ thống v5 mục 1",
+              "group": "Làm quen",
+              "kind": "leaf"
+            },
+            {
+              "id": 76,
+              "title": "Đường đi của một hồ sơ",
+              "en": "The journey of a dossier",
+              "detail": "**Mã:** HD.CH.02\n\n**Loại nội dung:** Làm quen\n\n**Mục đích:** Thấy các chặng của một hồ sơ, ai giữ và bấm nút gì ở mỗi chặng.\n\n**Đường dẫn:** `#hd-ch-02`\n\n**Clip:** CH0.2\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD NB 2 (quy trình mẫu 7 bước)",
+              "group": "Làm quen",
+              "kind": "leaf"
+            },
+            {
+              "id": 77,
+              "title": "Lộ trình đọc theo vai",
+              "en": "Reading path by role",
+              "detail": "**Mã:** HD.CH.05\n\n**Loại nội dung:** Làm quen\n\n**Mục đích:** Đọc đúng những mục cần cho vai của mình, theo thứ tự.\n\n**Đường dẫn:** `#hd-ch-05`\n\n**Clip:** không có\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** Bộ mẫu: mục 1.4",
+              "group": "Làm quen",
+              "kind": "leaf"
+            }
+          ]
+        },
+        {
+          "id": 83,
+          "title": "Tra cứu",
+          "en": "",
+          "detail": "**4 thẻ việc** trong nhóm này.",
+          "group": "Trang chung",
+          "children": [
+            {
+              "id": 79,
+              "title": "Bảng vai trò",
+              "en": "Roles table",
+              "detail": "**Mã:** HD.CH.03\n\n**Loại nội dung:** Tra cứu\n\n**Mục đích:** Tra mỗi vai được làm gì và thấy nút nào.\n\n**Đường dẫn:** `#hd-ch-03`\n\n**Clip:** không có\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** Bộ testcase: sheet phân vai",
+              "group": "Tra cứu",
+              "kind": "leaf"
+            },
+            {
+              "id": 80,
+              "title": "Bảng trạng thái hồ sơ",
+              "en": "Dossier status table",
+              "detail": "**Mã:** HD.CH.04\n\n**Loại nội dung:** Tra cứu\n\n**Mục đích:** Tra nghĩa của từng trạng thái và việc cần làm.\n\n**Đường dẫn:** `#hd-ch-04`\n\n**Clip:** không có\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD DN 5; slide 6 trạng thái",
+              "group": "Tra cứu",
+              "kind": "leaf"
+            },
+            {
+              "id": 81,
+              "title": "Thuật ngữ",
+              "en": "Glossary",
+              "detail": "**Mã:** HD.CH.07\n\n**Loại nội dung:** Tra cứu\n\n**Mục đích:** Tra nghĩa các từ dùng trong hướng dẫn và trên màn hình.\n\n**Đường dẫn:** `#hd-ch-07`\n\n**Clip:** không có\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD DN 8; HDSD NB 8",
+              "group": "Tra cứu",
+              "kind": "leaf"
+            },
+            {
+              "id": 82,
+              "title": "Câu hỏi thường gặp, liên hệ hỗ trợ",
+              "en": "FAQ and support contacts",
+              "detail": "**Mã:** HD.CH.08\n\n**Loại nội dung:** Tra cứu\n\n**Mục đích:** Tìm nhanh câu trả lời và nơi gọi khi cần hỗ trợ.\n\n**Đường dẫn:** `#hd-ch-08`\n\n**Clip:** không có\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** HDSD DN 7; HDSD NB 6.2",
+              "group": "Tra cứu",
+              "kind": "leaf"
+            }
+          ]
+        },
+        {
+          "id": 85,
+          "title": "Hiểu sâu",
+          "en": "",
+          "detail": "**1 thẻ việc** trong nhóm này.",
+          "group": "Trang chung",
+          "children": [
+            {
+              "id": 84,
+              "title": "Thời hạn xử lý tính thế nào",
+              "en": "How processing deadlines are calculated",
+              "detail": "**Mã:** HD.CH.06\n\n**Loại nội dung:** Hiểu sâu\n\n**Mục đích:** Hiểu ngày lịch, ngày làm việc và lúc nào đồng hồ dừng.\n\n**Đường dẫn:** `#hd-ch-06`\n\n**Clip:** không có\n\n**Nhóm thủ tục:** Mọi nhóm\n\n**Nguồn nội dung:** Quy trình ISO từng thủ tục",
+              "group": "Hiểu sâu",
+              "kind": "leaf"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 91,
+      "title": "Riêng từng nhóm thủ tục",
+      "en": "Procedure-specific chapters",
+      "detail": "**Phân hệ:** -\n\n**Số thẻ việc:** 3\n\n**Đường dẫn:** `#rg`\n\n**Lô sản xuất:** 4",
+      "group": "Chung",
+      "children": [
+        {
+          "id": 90,
+          "title": "Nhóm thủ tục",
+          "en": "",
+          "detail": "**3 thẻ việc** trong nhóm này.",
+          "group": "Riêng từng nhóm thủ tục",
+          "children": [
+            {
+              "id": 87,
+              "title": "Nhóm Thành viên: điểm riêng",
+              "en": "Membership procedures: what differs",
+              "detail": "**Mã:** HD.RG.01\n\n**Loại nội dung:** Tra cứu\n\n**Mục đích:** Biết những điểm riêng của thủ tục đăng ký, công nhận Thành viên.\n\n**Đường dẫn:** `#hd-rg-01`\n\n**Clip:** không có\n\n**Nhóm thủ tục:** Thành viên\n\n**Nguồn nội dung:** QT01_TV_ThanhVien",
+              "group": "Tra cứu",
+              "kind": "leaf"
+            },
+            {
+              "id": 88,
+              "title": "Nhóm Sở giao dịch hàng hóa: điểm riêng",
+              "en": "Commodity exchange procedures: what differs",
+              "detail": "**Mã:** HD.RG.02\n\n**Loại nội dung:** Tra cứu\n\n**Mục đích:** Biết những điểm riêng của thủ tục Sở giao dịch hàng hóa, Trung tâm thanh toán bù trừ.\n\n**Đường dẫn:** `#hd-rg-02`\n\n**Clip:** không có\n\n**Nhóm thủ tục:** Sở GD hàng hóa\n\n**Nguồn nội dung:** QT02_HH",
+              "group": "Tra cứu",
+              "kind": "leaf"
+            },
+            {
+              "id": 89,
+              "title": "Nhóm Ngân hàng: hồ sơ vi/en, bản dịch, phiếu lập văn bản",
+              "en": "Banking procedures: bilingual dossiers, translations, document drafting",
+              "detail": "**Mã:** HD.RG.03\n\n**Loại nội dung:** Tra cứu\n\n**Mục đích:** Biết những điểm riêng của thủ tục cấp phép ngân hàng.\n\n**Đường dẫn:** `#hd-rg-03`\n\n**Clip:** không có\n\n**Nhóm thủ tục:** Ngân hàng\n\n**Nguồn nội dung:** PROMPT_BanGiao_QT.NH.01; PROMPT_BanGiao_CapPhepChiNhanhNHNN",
+              "group": "Tra cứu",
+              "kind": "leaf"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 106,
+      "title": "Thành phần của một thẻ việc",
+      "en": "Anatomy of a task card",
+      "detail": "Mọi thẻ loại Cách làm có cùng bố cục.",
+      "children": [
+        {
+          "id": 98,
+          "title": "Tên việc, nhãn loại nội dung",
+          "en": "Title and content type",
+          "detail": "Nhãn: Làm quen, Cách làm, Tra cứu, Hiểu sâu.",
+          "kind": "leaf"
+        },
+        {
+          "id": 99,
+          "title": "Mục đích, ai làm",
+          "en": "Purpose and who",
+          "detail": "Một câu mục đích, kết bằng \"Ai làm\".",
+          "kind": "leaf"
+        },
+        {
+          "id": 100,
+          "title": "Các bước có số",
+          "en": "Numbered steps",
+          "detail": "Mỗi bước một hành động; tên nút đúng chữ trên màn hình. Đường dẫn tới bước: `#hd-dn-11-b3`.",
+          "kind": "leaf"
+        },
+        {
+          "id": 101,
+          "title": "Hình đổi theo bước",
+          "en": "Step-synced screenshot",
+          "detail": "Rê hoặc bấm bước nào thì hình chuyển sang ảnh của bước đó, vùng cần bấm có khung và số.",
+          "kind": "leaf"
+        },
+        {
+          "id": 102,
+          "title": "Hoàn thành khi",
+          "en": "Done when",
+          "detail": "Dấu hiệu nhìn thấy trên màn hình; rê vào thì hiện màn hình kết quả.",
+          "kind": "leaf"
+        },
+        {
+          "id": 103,
+          "title": "Clip mở đúng chương",
+          "en": "Clip at the right chapter",
+          "detail": "Cột chương có ảnh, thời lượng, đã xem; hết chương tự sang chương sau. Đường dẫn: `#clip-dn3-c6`.",
+          "kind": "leaf"
+        },
+        {
+          "id": 104,
+          "title": "Xử lý sự cố",
+          "en": "Troubleshooting",
+          "detail": "Bảng Tình huống - Cách xử lý.",
+          "kind": "leaf"
+        },
+        {
+          "id": 105,
+          "title": "Xem thêm",
+          "en": "See also",
+          "detail": "Dẫn tới các thẻ liên quan.",
+          "kind": "leaf"
+        }
+      ]
+    },
+    {
+      "id": 119,
+      "title": "Clip",
+      "en": "Clips",
+      "detail": "12 clip, chia chương theo cách làm.",
+      "children": [
+        {
+          "id": 107,
+          "title": "CH0 · Giới thiệu toàn cảnh",
+          "en": "System overview",
+          "detail": "**Vai:** Mọi vai\n\n**Chương:**\n- CH0.1 Tổng quan hệ thống, năm phân hệ\n- CH0.2 Đường đi của một hồ sơ",
+          "kind": "leaf"
+        },
+        {
+          "id": 108,
+          "title": "DN1 · Người nộp - bắt đầu và tài khoản",
+          "en": "Applicant - getting started",
+          "detail": "**Vai:** DN\n\n**Chương:**\n- DN1.1 Nhận tài khoản, đăng nhập lần đầu, đổi mật khẩu\n- DN1.2 Trang chủ, thông báo, đổi ngôn ngữ\n- DN1.3 Một vòng làm việc của người nộp\n- DN1.4 Quên mật khẩu, không đăng nhập được",
+          "kind": "leaf"
+        },
+        {
+          "id": 109,
+          "title": "DN2 · Người nộp - kiểm tra tên doanh nghiệp, eKYC",
+          "en": "Applicant - company name check and eKYC",
+          "detail": "**Vai:** DN\n\n**Chương:**\n- DN2.1 Kiểm tra tên doanh nghiệp\n- DN2.2 Xác thực eKYC",
+          "kind": "leaf"
+        },
+        {
+          "id": 110,
+          "title": "DN3 · Người nộp - tạo và gửi hồ sơ",
+          "en": "Applicant - create and submit a dossier",
+          "detail": "**Vai:** DN\n\n**Chương:**\n- DN3.1 Chọn đúng thủ tục và Cơ quan tiếp nhận\n- DN3.2 Kê khai biểu mẫu\n- DN3.3 Tải biểu mẫu, đính kèm tài liệu\n- DN3.4 Lưu nháp và mở lại hồ sơ\n- DN3.5 Kiểm tra trước khi gửi\n- DN3.6 Gửi hồ sơ",
+          "kind": "leaf"
+        },
+        {
+          "id": 111,
+          "title": "DN4 · Người nộp - theo dõi, bổ sung, nhận kết quả",
+          "en": "Applicant - track, supplement, get the result",
+          "detail": "**Vai:** DN\n\n**Chương:**\n- DN4.1 Theo dõi trạng thái hồ sơ\n- DN4.2 Bổ sung khi bị yêu cầu\n- DN4.3 Khi hồ sơ bị từ chối\n- DN4.4 Nhận và tải kết quả",
+          "kind": "leaf"
+        },
+        {
+          "id": 112,
+          "title": "MC1 · Một cửa - tiếp nhận hồ sơ",
+          "en": "One-stop desk - intake",
+          "detail": "**Vai:** MC\n\n**Chương:**\n- MC1.1 Đăng nhập, xác thực 2 lớp, trang chủ nội bộ\n- MC1.2 Nhận việc chờ xử lý, mở phiếu\n- MC1.3 Kiểm hồ sơ sơ bộ\n- MC1.4 Yêu cầu bổ sung\n- MC1.5 Từ chối kèm lý do\n- MC1.6 Đồng ý tiếp nhận, chuyển bước",
+          "kind": "leaf"
+        },
+        {
+          "id": 113,
+          "title": "CV1 · Chuyên viên - kiểm tra và chuyển hồ sơ",
+          "en": "Case officer - review and move a dossier",
+          "detail": "**Vai:** CV\n\n**Chương:**\n- CV1.1 Kiểm tra hồ sơ, xác nhận hồ sơ đầy đủ\n- CV1.2 Mở hồ sơ nội bộ trên Quản lý hồ sơ\n- CV1.3 Chuyển trạng thái hồ sơ\n- CV1.4 Tra cứu hồ sơ, lịch sử cập nhật",
+          "kind": "leaf"
+        },
+        {
+          "id": 114,
+          "title": "CV2 · Chuyên viên - công việc con, lấy ý kiến",
+          "en": "Case officer - sub-tasks and consultation",
+          "detail": "**Vai:** CV\n\n**Chương:**\n- CV2.1 Làm công việc con\n- CV2.2 Lấy ý kiến cơ quan liên quan, hội đồng\n- CV2.3 Quy trình liên quan\n- CV2.4 Bình luận, nhắc người, đính kèm",
+          "kind": "leaf"
+        },
+        {
+          "id": 115,
+          "title": "CV3 · Chuyên viên - lập văn bản, trình ký, trả kết quả",
+          "en": "Case officer - draft, submit for signature, return the result",
+          "detail": "**Vai:** CV\n\n**Chương:**\n- CV3.1 Tạo phiếu lập văn bản\n- CV3.2 Trình ký văn bản\n- CV3.3 Hoàn thành và trả kết quả",
+          "kind": "leaf"
+        },
+        {
+          "id": 116,
+          "title": "TP1 · Trưởng phòng - soát, duyệt, giao việc",
+          "en": "Head of division - review, approve, assign",
+          "detail": "**Vai:** TP\n\n**Chương:**\n- TP1.1 Tìm phiếu cần soát\n- TP1.2 Đồng ý hoặc yêu cầu trình lại\n- TP1.3 Yêu cầu bổ sung thông tin, tham vấn\n- TP1.4 Chuyển xử lý, ủy quyền phê duyệt\n- TP1.5 Theo dõi tiến độ của Ban",
+          "kind": "leaf"
+        },
+        {
+          "id": 117,
+          "title": "LD1 · Lãnh đạo - phê duyệt và ký số",
+          "en": "Leadership - approve and sign",
+          "detail": "**Vai:** LD\n\n**Chương:**\n- LD1.1 Phê duyệt phiếu\n- LD1.2 Không đồng ý hoặc yêu cầu trình lại\n- LD1.3 Ký số văn bản\n- LD1.4 Xem tiến độ hồ sơ",
+          "kind": "leaf"
+        },
+        {
+          "id": 118,
+          "title": "QT1 · Quản trị - khởi tạo doanh nghiệp, cấp tài khoản",
+          "en": "Administrator - enterprise records and accounts",
+          "detail": "**Vai:** QT\n\n**Chương:**\n- QT1.1 Khởi tạo doanh nghiệp\n- QT1.2 Cấp tài khoản Cổng đăng ký\n- QT1.3 Cấp lại mật khẩu, khóa tài khoản",
+          "kind": "leaf"
+        }
+      ]
+    },
+    {
+      "id": 124,
+      "title": "Tiện ích",
+      "en": "Utilities",
+      "detail": "Có ở mọi trang.",
+      "children": [
+        {
+          "id": 120,
+          "title": "Chuyển ngôn ngữ",
+          "en": "Language switch",
+          "detail": "Giữ nguyên thẻ đang xem khi đổi giữa tiếng Việt và English.",
+          "kind": "leaf"
+        },
+        {
+          "id": 121,
+          "title": "Tải slide và PDF",
+          "en": "Download slides and PDF",
+          "detail": "Slide theo vai; hướng dẫn nhanh và bản đầy đủ cho hai phía.",
+          "kind": "leaf"
+        },
+        {
+          "id": 122,
+          "title": "Đường dẫn sâu",
+          "en": "Deep links",
+          "detail": "Tới thẻ việc, tới bước, tới chương clip; để gắn từ nút Hướng dẫn và từ lời báo lỗi của hệ thống.",
+          "kind": "leaf"
+        },
+        {
+          "id": 123,
+          "title": "Bản điện thoại",
+          "en": "Mobile layout",
+          "detail": "Một cột; hình nằm dưới bước đang chọn; menu vai thu vào nút.",
+          "kind": "leaf"
+        }
+      ]
+    }
+  ]
+};
+
+/* ================= ENGINE (khong can sua) ================= */
+const canvas = document.getElementById("diagramCanvas");
+const viewport = document.getElementById("diagramViewport");
+const detailPanel = document.getElementById("detailPanel");
+const scrim = document.getElementById("scrim");
+
+const nodeById = new Map();
+const parentById = new Map();
+const displayNumberById = new Map();
+(function index(node,parent){ nodeById.set(node.id,node);
+  if(parent) parentById.set(node.id,parent);
+  (node.children||[]).forEach(c=>index(c,node)); })(diagramData,null);
+(function bfs(root){ const q=[root]; let n=1; while(q.length){ const x=q.shift();
+  displayNumberById.set(x.id,n++); (x.children||[]).forEach(c=>q.push(c)); }})(diagramData);
+
+const state = { expanded:new Set([diagramData.id]), focusedChildByParent:new Map(), zoom:0.9 };
+
+const hasChildren = n => (n.children||[]).length>0;
+function pathToRoot(id){ const p=[]; let c=nodeById.get(id); while(c){ p.unshift(c.id); c=parentById.get(c.id)||null; } return p; }
+function topBranch(id){ return pathToRoot(id)[1]; }
+function setFocus(path){ state.focusedChildByParent.clear();
+  for(let i=0;i<path.length-1;i++) state.focusedChildByParent.set(path[i],path[i+1]); }
+function visibleChildren(node){ const ch=node.children||[]; const f=state.focusedChildByParent.get(node.id);
+  if(!f) return ch; const a=ch.find(c=>c.id===f); return a?[a]:ch; }
+
+function toggleNode(id){
+  if(state.expanded.has(id)){
+    const parent=parentById.get(id);
+    const p=parent?pathToRoot(parent.id):[]; state.expanded=new Set(p); setFocus(p);
+    render(); centerNode(parent?parent.id:diagramData.id); return;
+  }
+  const p=pathToRoot(id); state.expanded=new Set(p); setFocus(p);
+  render(); centerNode(id);
+}
+
+function makeNode(node){
+  const wrap=document.createElement("div");
+  const b=topBranch(node.id);
+  wrap.className="node "+(node.kind||"")+(b?" branch-"+(((b%6)||6)):"")
+    +(hasChildren(node)?" has-children":"")+(state.expanded.has(node.id)?" is-expanded":"");
+  wrap.dataset.id=node.id;
+  const num=document.createElement("div"); num.className="node-num";
+  num.textContent=displayNumberById.get(node.id); wrap.appendChild(num);
+  const main=document.createElement("button"); main.type="button"; main.className="node-main";
+  main.textContent=node.title;
+  if(node.en){const en=document.createElement("span");en.className="node-en";en.textContent=node.en;main.appendChild(en);}
+  main.addEventListener("click",e=>{e.stopPropagation();openDetail(node.id);});
+  wrap.appendChild(main);
+  if(hasChildren(node)){
+    const bar=document.createElement("button"); bar.type="button"; bar.className="node-expand-bar";
+    bar.textContent=state.expanded.has(node.id)?"▲ thu":"▼ mo "+(node.children.length);
+    bar.addEventListener("click",e=>{e.stopPropagation();toggleNode(node.id);});
+    wrap.appendChild(bar);
+  }
+  return wrap;
+}
+function renderTree(node){
+  const li=document.createElement("li"); li.appendChild(makeNode(node));
+  if(hasChildren(node)&&state.expanded.has(node.id)){
+    const ul=document.createElement("ul");
+    visibleChildren(node).forEach(c=>ul.appendChild(renderTree(c)));
+    li.appendChild(ul);
+  }
+  return li;
+}
+function render(){
+  canvas.innerHTML="";
+  const tree=document.createElement("ul"); tree.className="tree";
+  tree.appendChild(renderTree(diagramData)); canvas.appendChild(tree);
+  applyZoom(); requestAnimationFrame(drawConnectors);
+}
+function drawConnectors(){
+  const old=canvas.querySelector("svg.links"); if(old) old.remove();
+  const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+  svg.setAttribute("class","links");
+  svg.setAttribute("width",canvas.scrollWidth); svg.setAttribute("height",canvas.scrollHeight);
+  const cRect=canvas.getBoundingClientRect(); const s=state.zoom||1;
+  const pt=(el,edge)=>{ const r=el.getBoundingClientRect();
+    return { x:(r.left-cRect.left)/s + (r.width/s)/2,
+             y:edge==="bottom"?(r.bottom-cRect.top)/s:(r.top-cRect.top)/s }; };
+  canvas.querySelectorAll(".node.has-children.is-expanded").forEach(pEl=>{
+    const li=pEl.closest("li"); const ul=li&&li.querySelector(":scope>ul"); if(!ul) return;
+    const pP=pt(pEl,"bottom");
+    ul.querySelectorAll(":scope>li>.node").forEach(cEl=>{
+      const cP=pt(cEl,"top"); const midY=pP.y+Math.max(16,(cP.y-pP.y)/2);
+      const path=document.createElementNS("http://www.w3.org/2000/svg","path");
+      path.setAttribute("d","M "+pP.x+" "+pP.y+" V "+midY+" H "+cP.x+" V "+cP.y);
+      svg.appendChild(path);
+    });
+  });
+  canvas.insertBefore(svg,canvas.firstChild);
+}
+function applyZoom(){ canvas.style.transform="scale("+state.zoom+")";
+  document.getElementById("zoomValue").textContent=state.zoom.toFixed(2)+"×"; }
+function centerNode(id){ requestAnimationFrame(()=>{
+  const el=canvas.querySelector('.node[data-id="'+id+'"]'); if(!el) return;
+  const vR=viewport.getBoundingClientRect(), nR=el.getBoundingClientRect();
+  const cx=nR.left-vR.left+viewport.scrollLeft+nR.width/2;
+  viewport.scrollLeft=Math.max(0,cx-viewport.clientWidth/2);
+  viewport.scrollTop=Math.max(0,nR.top-vR.top+viewport.scrollTop-70);
+});}
+
+/* -------- mini Markdown -------- */
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function inline(s){ return esc(s)
+  .replace(/`([^`]+)`/g,"<code>$1</code>")
+  .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
+  .replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>")
+  .replace(/\*([^*]+)\*/g,"<em>$1</em>"); }
+function renderMarkdown(src){
+  const lines=(src||"").split("\n"); let html="",list=false;
+  const closeList=()=>{ if(list){html+="</ul>";list=false;} };
+  for(const raw of lines){ const l=raw.trim();
+    if(!l){ closeList(); continue; }
+    let m;
+    if(m=l.match(/^#{1,4}\s+(.*)/)){ closeList(); html+="<h3>"+inline(m[1])+"</h3>"; }
+    else if(m=l.match(/^[-*]\s+(.*)/)){ if(!list){html+="<ul>";list=true;} html+="<li>"+inline(m[1])+"</li>"; }
+    else { closeList(); html+="<p>"+inline(l)+"</p>"; }
+  }
+  closeList(); return html;
+}
+
+/* -------- detail panel -------- */
+function openDetail(id){
+  const node=nodeById.get(id); if(!node) return;
+  document.getElementById("panelId").textContent="Node "+displayNumberById.get(id);
+  document.getElementById("panelTitle").textContent=node.title;
+  if(node.en){const pe=document.createElement("div");pe.className="panel-en";pe.textContent=node.en;document.getElementById("panelTitle").appendChild(pe);}
+  const g=document.getElementById("panelGroup"); g.textContent=node.group||""; g.hidden=!node.group;
+  document.getElementById("panelDescription").innerHTML=renderMarkdown(node.detail||"_Chua co mo ta._");
+  const pills=document.getElementById("panelChildren"); pills.innerHTML="";
+  const label=document.getElementById("childrenLabel");
+  const ch=node.children||[]; label.hidden=ch.length===0;
+  ch.forEach(c=>{ const b=document.createElement("button");
+    b.textContent=displayNumberById.get(c.id)+". "+c.title;
+    b.addEventListener("click",()=>openDetail(c.id)); pills.appendChild(b); });
+  detailPanel.classList.add("open"); scrim.hidden=false;
+}
+function closeDetail(){ detailPanel.classList.remove("open"); scrim.hidden=true; }
+
+/* -------- controls -------- */
+document.getElementById("closePanel").addEventListener("click",closeDetail);
+scrim.addEventListener("click",closeDetail);
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeDetail(); });
+document.getElementById("expandAll").addEventListener("click",()=>{
+  state.focusedChildByParent.clear(); state.expanded=new Set([...nodeById.values()].filter(hasChildren).map(n=>n.id));
+  render(); });
+document.getElementById("collapseAll").addEventListener("click",()=>{
+  state.expanded=new Set([diagramData.id]); state.focusedChildByParent.clear();
+  render(); centerNode(diagramData.id); });
+const zoomRange=document.getElementById("zoomRange");
+zoomRange.addEventListener("input",e=>{ state.zoom=Number(e.target.value); applyZoom();
+  requestAnimationFrame(drawConnectors); });
+/* pan */
+let drag=false,sx,sy,ssx,ssy;
+viewport.addEventListener("pointerdown",e=>{ if(e.target.closest("button"))return;
+  drag=true; viewport.classList.add("dragging"); sx=e.clientX;sy=e.clientY;
+  ssx=viewport.scrollLeft;ssy=viewport.scrollTop; viewport.setPointerCapture(e.pointerId); });
+viewport.addEventListener("pointermove",e=>{ if(!drag)return;
+  viewport.scrollLeft=ssx-(e.clientX-sx); viewport.scrollTop=ssy-(e.clientY-sy); });
+viewport.addEventListener("pointerup",()=>{drag=false;viewport.classList.remove("dragging");});
+window.addEventListener("resize",()=>requestAnimationFrame(drawConnectors));
+
+state.zoom=Number(zoomRange.value);
+render(); centerNode(diagramData.id);
+</script>
+</body>
+</html>
